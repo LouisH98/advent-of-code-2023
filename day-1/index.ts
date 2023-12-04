@@ -1,9 +1,6 @@
-const file = Bun.file("./data.txt");
-const text = await file.text();
+import { toLines } from "../util";
 
-// get first and last digit in string
-// parse, and sum each digit
-const lines = text.split("\n");
+const lines = await toLines("./data.txt");
 
 const WORD_TO_NUM = {
   one: "1",
