@@ -17,7 +17,7 @@ const WORD_TO_NUM = {
   nine: "9",
 };
 
-function replaceNumberWords(line: string) {
+function replaceNumberWords(line: string): string {
   // iterate through num words
   // check if any word is present at start of string
   // if so, replace it, return replaceNumWords(rest)
@@ -27,7 +27,7 @@ function replaceNumberWords(line: string) {
   for (const [word, number] of Object.entries(WORD_TO_NUM)) {
     // check if we have a match at the start
     if (line.startsWith(word)) {
-      return number + replaceNumberWords(line.substring(word.length));
+      return word + number + word + replaceNumberWords(line.substring(1));
     }
   }
 
