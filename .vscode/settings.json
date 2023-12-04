@@ -1,0 +1,9 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./aoc-23/Cargo.toml",
+        "./aoc-23/Cargo.toml",
+        "./aoc-23/Cargo.toml",
+        "./aoc-23/Cargo.toml",
+        "./aoc-23/Cargo.toml"
+    ]
+}
