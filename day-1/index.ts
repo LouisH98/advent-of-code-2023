@@ -59,8 +59,14 @@ function getLineDigits(line: string) {
   return parseInt(`${first}${last}`);
 }
 
-const digits = lines.map(replaceNumberWords).map(getLineDigits);
+const ans1 = lines
+  .map(replaceNumberWords)
+  .map(getLineDigits)
+  .reduce((acc, current) => acc + current, 0);
 
-const sum = digits.reduce((acc, current) => acc + current, 0);
+const ans2 = lines
+  .map(getLineDigits)
+  .reduce((acc, current) => acc + current, 0);
 
-console.log(`Answer: ${sum}`);
+console.log(`Answer: ${ans1}`);
+console.log(`Answer: ${ans2}`);
