@@ -20,15 +20,53 @@ class Map {
   constructor(
     public name: MapTypes,
     public mappings: Mapping[] = [],
+    public seeds: number[],
     public dependsUpon?: Map,
     public next?: Map
   ) { }
+
+  getMapForNumber(num: number) {
+    for (const map of this.mappings) {
+      if (num >= map.source && num <= map.source + map.length) {
+        return map;
+      }
+    }
+    return undefined;
+  }
+
+
+  getValue(input: number) {
+    const mapping = this.getMapForNumber(input);
+
+
+    if (mapping) {
+      const offset = (mapping.destination - mapping.source);
+      return input + offset;
+    }
+
+    return input
+  }
 }
 
-function buildMaps(input: string): Map[] {
+function buildMaps(input: string, isSeedRange: boolean): { seeds: number[], mapObjects: Map[] } {
   const parts = input.split("\n\n");
-  const seeds = parts[0].split(": ")[1].split(" ").map(Number);
-  console.log(seeds);
+  let seeds = parts[0].split(": ")[1].split(" ").map(Number);
+
+  if (isSeedRange) {
+    const seedRanges = [...seeds];
+    seeds = [];
+
+    for (let index = 0; index < seedRanges.length; index += 2) {
+      const seedRangeStart = seedRanges[index];
+      const seedRangeEnd = seedRangeStart + seedRanges[index + 1]
+
+
+      for (let seed = seedRangeStart; seed < seedRangeEnd; seed++) {
+        seeds.push(seed)
+      }
+    }
+  }
+
 
   const maps = parts.slice(1);
 
@@ -39,7 +77,7 @@ function buildMaps(input: string): Map[] {
   for (const map of maps) {
     const name = map.split(" ")[0];
 
-    const mapObject = new Map(name as MapTypes, [], previousMap);
+    const mapObject: Map = new Map(name as MapTypes, [], seeds, previousMap);
 
     const mappings = map.split("\n").slice(1);
 
@@ -54,13 +92,50 @@ function buildMaps(input: string): Map[] {
     }
 
     mapObjects.push(mapObject);
-    
+
     if (previousMap !== undefined) { previousMap.next = mapObject; }
     previousMap = mapObject;
-
   }
 
-  console.log(mapObjects);
+  return { seeds, mapObjects };
 }
 
-const maps = buildMaps(rawData);
+
+
+
+function getLocations(seeds, mapObjects) {
+  let results = [];
+  for (const seed of seeds) {
+    let lastResult;
+    for (const map of mapObjects) {
+      if (lastResult === undefined) {
+        lastResult = map.getValue(seed);
+        continue;
+      }
+      lastResult = map.getValue(lastResult);
+    }
+
+    results.push(lastResult);
+  }
+  return results;
+}
+
+function part1() {
+  const { seeds, mapObjects } = buildMaps(rawData, false);
+
+  const locations = getLocations(seeds, mapObjects);
+
+  console.log(`Answer: ${locations.sort((a, b) => (a - b))[0]}`)
+}
+
+function part2() {
+  const { seeds, mapObjects } = buildMaps(rawData, true);
+
+  const locations = getLocations(seeds, mapObjects);
+
+  console.log(`Answer: ${locations.sort((a, b) => (a - b))[0]}`)
+}
+
+
+part1();
+part2();
